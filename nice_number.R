@@ -1,6 +1,7 @@
 rm(list = ls())
 library(tidyverse)
 library(magrittr)
+library(data.table)
 options(scipen=10)
 sub_bay <- function(num){num %>% format(digit = 10) %>% str_sub(start = 2L, end = 8L)}
 sub_sau <- function(num){num %>% format(digit = 10) %>% str_sub(start = 2L, end = 7L)}
@@ -117,8 +118,8 @@ v7n <- list(a = 1e7 + 1110111*0:9,
 v7 <- c(v71, v72, v73, v74, v75, v7a, v7b, v7c, v7d, v7e,
         v7f, v7g, v7ga, v7gb, v7h, v7i, v7k, v7l, v7n) 
 
-df_v7 <- data.frame(so_dep = v7) %>% 
-  mutate(tag = case_when(so_dep %in% v71 ~ "aaaaaaa",
+df_v7 <- data.table(so_dep = v7)
+df_v7[, tag := case_when(so_dep %in% v71 ~ "aaaaaaa",
                          so_dep %in% v72 ~ "a(a+1)...(a+6)",
                          so_dep %in% v73 ~ "aaaaa(a+1)(a+2)",
                          so_dep %in% v74 ~ "aaaa(a+1)(a+2)(a+3)",
@@ -129,17 +130,17 @@ df_v7 <- data.frame(so_dep = v7) %>%
                          so_dep %in% v7d ~ "aaabbbb",
                          so_dep %in% v7e ~ "aabbbbb",
                          so_dep %in% v7f ~ "aaabcbc",
+                         so_dep %in% v7g ~ "ababccc",
                          so_dep %in% v7ga ~ "aaabbcc",
                          so_dep %in% v7gb ~ "aabbccc",
                          so_dep %in% v7h ~ "aabbbaa",
                          so_dep %in% v7i ~ "aababaa",
                          so_dep %in% v7k ~ "abababa",
                          so_dep %in% v7l ~ "aababaa",
-                         so_dep %in% v7n ~ "aaabaaa"
-                         )) %>% 
-  mutate(so_dep = sub_bay(so_dep),
-         loai = "V7") %>%
-  distinct()
+                         so_dep %in% v7n ~ "aaabaaa")
+    ][, `:=` (so_dep= sub_bay(so_dep),
+      loai = "V7") ] %>% 
+  unique()
 
 
 #=============================================================================
@@ -194,9 +195,9 @@ v69 <- list(a = 1e6 + 100001 * 0:9,
 
 v6 <- c(v61, v62, v63, v64, v65, v66, v67, v68, v69) 
 
-df_v6 <- data.frame(so_dep = v6) %>% 
-  mutate(tag = case_when(so_dep %in% v61 ~ "aaaaaa",
-                         so_dep %in% v62 ~ "a(a+1)..(a+5)",
+df_v6 <- data.table(so_dep = v6)
+df_v6[, tag := case_when(so_dep %in% v61 ~ "aaaaaa",
+                         so_dep %in% v62 ~ "a(a+1)...(a+5)",
                          so_dep %in% v63 ~ "aabbcc",
                          so_dep %in% v64 ~ "aaabbb",
                          so_dep %in% v65 ~ "ababab",
@@ -204,11 +205,10 @@ df_v6 <- data.frame(so_dep = v6) %>%
                          so_dep %in% v67 ~ "aaaabb",
                          so_dep %in% v68 ~ "aabbbb",
                          so_dep %in% v69 ~ "abccba"
-                         ))%>% 
-  mutate(so_dep = sub_sau(so_dep),
-         loai = "V6") %>%
-  distinct()
-
+                         )
+      ][,`:=` (so_dep = sub_sau(so_dep),
+              loai = "V6") 
+      ] %>% unique()
 
 #=============================================================================
 # CONG THUC SO DEP ------ V5 -------
@@ -239,18 +239,18 @@ v56 <- data.frame(permutations(10, 3, 0:9)) %>%
 
 v5 <- c(v51, v52, v53, v54, v55, v56) 
 
-df_v5 <- data.frame(so_dep = v5) %>% 
-  mutate(tag = case_when(so_dep %in% v51 ~ "aaaaa",
-                         so_dep %in% v52 ~ "a(a+1)..(a+4)",
+df_v5 <- data.table(so_dep = v5)
+
+df_v5[,tag := case_when(so_dep %in% v51 ~ "aaaaa",
+                         so_dep %in% v52 ~ "a(a+1)...(a+4)",
                          so_dep %in% v53 ~ "aaabb",
                          so_dep %in% v54 ~ "aabbb",
                          so_dep %in% v55 ~ "abcab",
                          so_dep %in% v56 ~ "abcba"
 
-  ))%>% 
-  mutate(so_dep = sub_nam(so_dep),
-         loai = "V5") %>%
-  distinct()
+  )][,`:=` (so_dep = sub_nam(so_dep),
+          loai = "V5")] %>%
+  unique()
 
 #=============================================================================
 # CONG THUC SO DEP ------ V4 -------
@@ -275,18 +275,18 @@ v46 <- 13979
 
 v4 <- c(v41, v42, v43, v44, v45, v46) 
 
-df_v4 <- data.frame(so_dep = v4) %>% 
-  mutate(tag = case_when(so_dep %in% v41 ~ "aaaa",
-                         so_dep %in% v42 ~ "a(a+1)..(a+3)",
+df_v4 <- data.table(so_dep = v4)
+
+df_v4[, tag := case_when(so_dep %in% v41 ~ "aaaa",
+                         so_dep %in% v42 ~ "a(a+1)...(a+3)",
                          so_dep %in% v43 ~ "aabb",
                          so_dep %in% v44 ~ "abab",
                          so_dep %in% v45 ~ "abba",
                          so_dep %in% v46 ~ "3979"
                          
-  ))%>% 
-  mutate(so_dep = sub_bon(so_dep),
-         loai = "V4") %>%
-  distinct()
+  )][,`:=`(so_dep = sub_bon(so_dep),
+         loai = "V4")] %>% 
+  unique()
 
 #=============================================================================
 # CONG THUC SO DEP ------ V3 -------
@@ -314,44 +314,43 @@ v35 <- list(x = 1e3 + 100 * 0:9,
 
 v3 <- c(v31, v32, v33, v34, v35)  
 
-df_v3 <- data.frame(so_dep = v3) %>% 
-  mutate(tag = case_when(so_dep %in% v31 ~ "aaa",
+df_v3 <- data.table(so_dep = v3)
+df_v3[, tag := case_when(so_dep %in% v31 ~ "aaa",
                          so_dep %in% v32 ~ "a(a+1)(a+2)",
                          so_dep %in% v33 ~ "aba",
                          so_dep %in% v34 ~ "aab",
                          so_dep %in% v35 ~ "abb"
                          
-  ))%>% 
-  mutate(so_dep = sub_ba(so_dep),
-         loai = "V3") %>%
-  distinct()
+  )][,`:=`(so_dep = sub_ba(so_dep),
+         loai = "V3")] %>%
+  unique()
 
 #=============================================================================
 # CONG THUC SO DEP
 #=============================================================================
-day_so <- data.frame(so = 1e7 + 0:9999999)
+day_so <- data.table(so = 1e7 + 0:9999999)
 
-df_so_dep <- rbind(df_v7, df_v6, df_v5, df_v4, df_v3)
+# df_so_dep <- rbind(df_v7, df_v6, df_v5, df_v4, df_v3)
 
-kq_v7 <- day_so %>% 
-  mutate(so_dep = substr(so, 2, 8)) %>% 
-  inner_join(df_v7)
+setkey(df_v7, so_dep)
+setkey(df_v6, so_dep)
+setkey(df_v5, so_dep)
+setkey(df_v4, so_dep)
+setkey(df_v3, so_dep)
 
-kq_v6 <- day_so %>% 
-  mutate(so_dep = substr(so, 3, 8)) %>% 
-  inner_join(df_v6)
 
-kq_v5 <- day_so %>% 
-  mutate(so_dep = substr(so, 4, 8)) %>% 
-  inner_join(df_v5)
+ghep <- function(dt2, ct){
+  m <- day_so %>% 
+    mutate(so_dep = substr(so, ct, 8)) %>% 
+    inner_join(dt2)
+}
+  
+kq_v7 <- ghep(df_v7, 2)
+kq_v6 <- ghep(df_v6, 3)
+kq_v5 <- ghep(df_v5, 4)
+kq_v4 <- ghep(df_v4, 5)
+kq_v3 <- ghep(df_v3, 6)
 
-kq_v4 <- day_so %>% 
-  mutate(so_dep = substr(so, 5, 8)) %>% 
-  inner_join(df_v4)
-
-kq_v3 <- day_so %>% 
-  mutate(so_dep = substr(so, 6, 8)) %>% 
-  inner_join(df_v3)
 
 kq <- rbind(kq_v7, kq_v6, kq_v5, kq_v4, kq_v3) %>% 
   mutate(so_dep = substr(so, 2, 8))
@@ -363,11 +362,36 @@ kq$so <- NULL
 
 save(kq, file = "kq.RData")
 
+#=============================================================================
+
+final_kq <- as.data.table(kq)
+
+final_kq[, xx := case_when(
+  stringr::str_detect(so_dep, "6") &
+    stringr::str_detect(so_dep, "8") ~ "A",
+  stringr::str_detect(so_dep, "6") &
+    stringr::str_detect(so_dep, "9") ~ "A",
+  stringr::str_detect(so_dep, "8") &
+    stringr::str_detect(so_dep, "9") ~ "A",
+  TRUE ~ 'B'
+)][, type := case_when(
+  loai == 'V7' & xx == 'A' ~ 'V7_A',
+  loai == 'V7' & tag == 'aaaaaaa' ~ 'V7_A',
+  loai == 'V7' & tag == 'a(a+1)...(a+6)' ~ 'V7_A',
+  loai == 'V7' & xx == 'B' ~ 'V7_B',
+  loai == 'V6' & xx == 'A' ~ 'V6_A',
+  loai == 'V6' & tag == 'aaaaaa' ~ 'V6_A',
+  loai == 'V6' & tag == 'a(a+1)...(a+5)' ~ 'V6_A',
+  loai == 'V6' & xx == 'B' ~ 'V6_B',
+  TRUE ~ loai
+)]
+
+final_kq[,c("loai", "xx") := NULL]
 
 # Xuat ra excel
 
-kq_4567 <- kq %>% filter(loai %in% c("V4", "V5", "V6", "V7"))
-kq_3 <- kq %>% filter(loai == "V3")
+kq_4567 <- final_kq %>% filter(type %in% c("V4", "V5", "V6_A", "V6_B", "V7_A", "V7_B"))
+kq_3 <- final_kq %>% filter(type == "V3")
 kq_3a <- kq_3 %>% slice(1:9e5)
 kq_3b <- kq_3 %>% slice(900001:18e5)
 kq_3c <- kq_3 %>% slice(1800001:3e6)
@@ -376,14 +400,20 @@ list(kq_4567 = kq_4567,
      kq_3a = kq_3a,
      kq_3b = kq_3b,
      kq_3c = kq_3c) %>% 
-  writexl::write_xlsx("kq.xlsx")
+  writexl::write_xlsx("final_kq.xlsx")
 
-data.table::fwrite(kq, "kq.csv")
+data.table::fwrite(final_kq, "final_kq.csv")
+
 #=============================================================================
 # Kiem tra lai ket qua
-kq$loai %>% table()
-kq %>% filter(loai == "V4") %>%  pull(so)->x
+final_kq$type %>% table()
+
+kq %>% filter(loai == "V4") %>%  pull(so_dep) ->x
 xx <- x %>% sub_bon()
 
-setdiff(v4, xx)
+setdiff(sub_bon(v4), xx)
 
+ghep <- function(dt2, ct){
+  dt <- day_so[, so_dep := substr(so, ct, 8)]
+  m <- dt[dt2, on = .(so_dep = so_dep), roll = -Inf, nomatch = 0]
+}
