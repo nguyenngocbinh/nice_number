@@ -360,58 +360,97 @@ kq <- kq %>%
 
 kq$so <- NULL
 
-save(kq, file = "kq.RData")
+# Save tam ket qua
+save(kq, file = "kq_new.RData")
 
 #=============================================================================
 
 final_kq <- as.data.table(kq)
 
-final_kq[, xx := case_when(
-  stringr::str_detect(so_dep, "6") &
-    stringr::str_detect(so_dep, "8") ~ "A",
-  stringr::str_detect(so_dep, "6") &
-    stringr::str_detect(so_dep, "9") ~ "A",
-  stringr::str_detect(so_dep, "8") &
-    stringr::str_detect(so_dep, "9") ~ "A",
-  TRUE ~ 'B'
-)][, type := case_when(
-  loai == 'V7' & xx == 'A' ~ 'V7_A',
-  loai == 'V7' & tag == 'aaaaaaa' ~ 'V7_A',
-  loai == 'V7' & tag == 'a(a+1)...(a+6)' ~ 'V7_A',
-  loai == 'V7' & xx == 'B' ~ 'V7_B',
-  loai == 'V6' & xx == 'A' ~ 'V6_A',
-  loai == 'V6' & tag == 'aaaaaa' ~ 'V6_A',
-  loai == 'V6' & tag == 'a(a+1)...(a+5)' ~ 'V6_A',
-  loai == 'V6' & xx == 'B' ~ 'V6_B',
-  TRUE ~ loai
+# final_kq[, xx := case_when(
+#   stringr::str_detect(so_dep, "6") &
+#     stringr::str_detect(so_dep, "8") ~ "A",
+#   stringr::str_detect(so_dep, "6") &
+#     stringr::str_detect(so_dep, "9") ~ "A",
+#   stringr::str_detect(so_dep, "8") &
+#     stringr::str_detect(so_dep, "9") ~ "A",
+#   TRUE ~ 'B'
+# )][, type := case_when(
+#   loai == 'V7' & xx == 'A' ~ 'V7_A',
+#   loai == 'V7' & tag == 'aaaaaaa' ~ 'V7_A',
+#   loai == 'V7' & tag == 'a(a+1)...(a+6)' ~ 'V7_A',
+#   loai == 'V7' & xx == 'B' ~ 'V7_B',
+#   loai == 'V6' & xx == 'A' ~ 'V6_A',
+#   loai == 'V6' & tag == 'aaaaaa' ~ 'V6_A',
+#   loai == 'V6' & tag == 'a(a+1)...(a+5)' ~ 'V6_A',
+#   loai == 'V6' & xx == 'B' ~ 'V6_B',
+#   TRUE ~ loai
+# )]
+# 
+# final_kq[,c("loai", "xx") := NULL]
+#=============================================================================
+cut_bay <- function(num){num %>% format(digit = 10) %>% str_sub(start = 1L, end = 7L)}
+cut_sau <- function(num){num %>% format(digit = 10) %>% str_sub(start = 2L, end = 7L)}
+cut_nam <- function(num){num %>% format(digit = 10) %>% str_sub(start = 3L, end = 7L)}
+cut_bon <- function(num){num %>% format(digit = 10) %>% str_sub(start = 4L, end = 7L)}
+cut_ba <- function(num){num %>% format(digit = 10) %>% str_sub(start = 5L, end = 7L)}
+
+# Ngay 16/4/2020 bo sung them so trung, tien, loc phat
+final_kq[, sub_num := case_when(loai == 'V3' ~ cut_ba(so_dep),
+                                loai == 'V4' ~ cut_bon(so_dep),
+                                loai == 'V5' ~ cut_nam(so_dep),
+                                loai == 'V6' ~ cut_sau(so_dep),
+                                loai == 'V7' ~ cut_bay(so_dep)
+                                )  
+         ][, xx := case_when(
+           stringr::str_detect(sub_num, "1") |
+             stringr::str_detect(sub_num, "2") |
+             stringr::str_detect(sub_num, "3") |
+             stringr::str_detect(sub_num, "4") |
+             stringr::str_detect(sub_num, "5") |
+             stringr::str_detect(sub_num, "7") |
+             stringr::str_detect(sub_num, "9") |
+             stringr::str_detect(sub_num, "0") ~ "KHAC",
+           TRUE ~ 'CHUA 6 HOAC 8')
+           ][, new_type := case_when(
+             tag %in% c('aaaaaaa', 'aaaaaa', 'aaaaa', 'aaaa', 'aaa') ~ 'SO TRUNG',
+             tag %in% c('a(a+1)(a+2)', 'a(a+1)...(a+3)', 'a(a+1)...(a+4)', 
+                        'a(a+1)...(a+5)', 'a(a+1)...(a+6)') ~ 'SO TIEN',
+             TRUE ~ xx
 )]
 
-final_kq[,c("loai", "xx") := NULL]
+# final_kq[, c("xx", "sub_num") := NULL]
+final_kq[, xx := NULL]
 
+#=============================================================================
 # Xuat ra excel
-
-kq_4567 <- final_kq %>% filter(type %in% c("V4", "V5", "V6_A", "V6_B", "V7_A", "V7_B"))
-kq_3 <- final_kq %>% filter(type == "V3")
+tab <- table(final_kq$new_type, final_kq$loai) %>% as.data.frame() %>% arrange(Var1, Var2) 
+kq_4567 <- final_kq %>% filter(loai %in% c("V4", "V5", "V6", "V7"))
+kq_3 <- final_kq %>% filter(loai == "V3")
 kq_3a <- kq_3 %>% slice(1:9e5)
 kq_3b <- kq_3 %>% slice(900001:18e5)
 kq_3c <- kq_3 %>% slice(1800001:3e6)
 
-list(kq_4567 = kq_4567,
+list(tab= tab,
+     kq_4567 = kq_4567,
      kq_3a = kq_3a,
      kq_3b = kq_3b,
-     kq_3c = kq_3c) %>% 
+     kq_3c = kq_3c) %>%
   writexl::write_xlsx("final_kq.xlsx")
 
 data.table::fwrite(final_kq, "final_kq.csv")
 
+
+
+
 #=============================================================================
 # Kiem tra lai ket qua
-final_kq$type %>% table()
+final_kq$loai %>% table()
 
-kq %>% filter(loai == "V4") %>%  pull(so_dep) ->x
-xx <- x %>% sub_bon()
+final_kq %>% filter(loai == "V4") %>%  pull(so_dep) ->x
+xx <- x %>% cut_bon()
 
-setdiff(sub_bon(v4), xx)
+setdiff(df_v4$so_dep, xx)
 
 ghep <- function(dt2, ct){
   dt <- day_so[, so_dep := substr(so, ct, 8)]
