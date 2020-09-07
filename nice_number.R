@@ -1,3 +1,7 @@
+# Author: Nguyen Ngoc Binh
+# Date update: 07/09/2020
+# Them so dep V4: aaab, V5: aaaab, V6: aaaaab
+
 rm(list = ls())
 library(tidyverse)
 library(magrittr)
@@ -8,6 +12,8 @@ sub_sau <- function(num){num %>% format(digit = 10) %>% str_sub(start = 2L, end 
 sub_nam <- function(num){num %>% format(digit = 10) %>% str_sub(start = 2L, end = 6L)}
 sub_bon <- function(num){num %>% format(digit = 10) %>% str_sub(start = 2L, end = 5L)}
 sub_ba <- function(num){num %>% format(digit = 10) %>% str_sub(start = 2L, end = 4L)}
+
+
 
 #=============================================================================
 # CONG THUC SO DEP ------ V7 -------
@@ -115,8 +121,47 @@ v7n <- list(a = 1e7 + 1110111*0:9,
   cross() %>%
   map_dbl(lift(sum))
 
+# ----- aaababa
+v7o <- list(a = 1e7 + 1110101*0:9,
+            b = 1010 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ----- ababaaa
+v7p <- list(a = 1e7 + 1010111*0:9,
+            b = 101000 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ----- aabbaaa
+v7q <- list(a = 1e7 + 1100111*0:9,
+            b = 11000 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ----- ababbbb
+v7r <- list(a = 1e7 + 1010000*0:9,
+            b = 101111 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ----- aaaabab
+v7t <- list(a = 1e7 + 1111010*0:9,
+            b = 101 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ----- aaabbaa
+v7x <- list(a = 1e7 + 1110011*0:9,
+            b = 1100 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+
+
 v7 <- c(v71, v72, v73, v74, v75, v7a, v7b, v7c, v7d, v7e,
-        v7f, v7g, v7ga, v7gb, v7h, v7i, v7k, v7l, v7n) 
+        v7f, v7g, v7ga, v7gb, v7h, v7i, v7k, v7l, v7n, 
+        v7o, v7p, v7q, v7r, v7t, v7x) 
 
 df_v7 <- data.table(so_dep = v7)
 df_v7[, tag := case_when(so_dep %in% v71 ~ "aaaaaaa",
@@ -137,7 +182,13 @@ df_v7[, tag := case_when(so_dep %in% v71 ~ "aaaaaaa",
                          so_dep %in% v7i ~ "aababaa",
                          so_dep %in% v7k ~ "abababa",
                          so_dep %in% v7l ~ "aababaa",
-                         so_dep %in% v7n ~ "aaabaaa")
+                         so_dep %in% v7n ~ "aaabaaa",
+                         so_dep %in% v7o ~ "aaababa",
+                         so_dep %in% v7p ~ "ababaaa",
+                         so_dep %in% v7q ~ "aabbaaa",
+                         so_dep %in% v7r ~ "ababbbb",
+                         so_dep %in% v7t ~ "aaaabab",
+                         so_dep %in% v7x ~ "aaabbaa")
     ][, `:=` (so_dep= sub_bay(so_dep),
       loai = "V7") ] %>% 
   unique()
@@ -148,63 +199,107 @@ df_v7[, tag := case_when(so_dep %in% v71 ~ "aaaaaaa",
 #=============================================================================
 
 # aaaaaa
-v61 <- 1e6 + 111111 * 0:9
+v601 <- 1e6 + 111111 * 0:9
 
 # a(a+1)..(a+5)
-v62 <- 1e6 + 012345 + 111111 * 0:4
+v602 <- 1e6 + 012345 + 111111 * 0:4
 # aabbcc
-v63 <- data.frame(permutations(10, 3, 0:9)) %>% 
+v603 <- data.frame(permutations(10, 3, 0:9)) %>% 
   mutate(x4 = paste0("1", X1, X1, X2, X2, X3, X3)) %>% 
   pull(x4)
 
 # aaabbb
-v64 <- list(x = 1e6 + 111000 * 0:9,
+v604 <- list(x = 1e6 + 111000 * 0:9,
             y = 111 * 0:9) %>% 
   cross() %>%
   map_dbl(lift(sum))
 
 # ababab
-v65 <- list(x = 1e6 + 0:99*1e4,
+v605 <- list(x = 1e6 + 0:99*1e4,
             y = 0:99*1e2,
             z = 0:99) %>%
   pmap_dbl(sum)
 
 # abcabc
-v66 <- data.frame(permutations(10, 3, 0:9)) %>% 
+v606 <- data.frame(permutations(10, 3, 0:9)) %>% 
   mutate(x4 = paste0("1", X1, X2, X3, X1, X2, X3)) %>% 
   pull(x4)
 
 # aaaabb
-v67 <- list(x = 1e6 + 111100 * 0:9,
+v607 <- list(x = 1e6 + 111100 * 0:9,
             y = 11 * 0:9) %>% 
   cross() %>%
   map_dbl(lift(sum))
 
 # aabbbb
-v68 <- list(x = 1e6 + 110000 * 0:9,
+v608 <- list(x = 1e6 + 110000 * 0:9,
             y = 1111 * 0:9) %>% 
   cross() %>%
   map_dbl(lift(sum))
 
 # ---- abccba
-v69 <- list(a = 1e6 + 100001 * 0:9,
+v609 <- list(a = 1e6 + 100001 * 0:9,
             b = 10010 * 0:9,
             c = 1100 * 0:9) %>% 
   cross() %>%
   map_dbl(lift(sum))
 
-v6 <- c(v61, v62, v63, v64, v65, v66, v67, v68, v69) 
+# ---- aabbaa
+v610 <- list(a = 1e6 + 110011 * 0:9,
+             b = 1100 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+
+# ---- abaaba
+v611 <- list(a = 1e6 + 101101 * 0:9,
+             b = 10010 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ---- abbabb
+v612 <- list(a = 1e6 + 100100 * 0:9,
+             b = 11011 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ---- abbbba
+v613 <- list(a = 1e6 + 100001 * 0:9,
+             b = 11110 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ---- aabaab
+v614 <- list(a = 1e6 + 110110 * 0:9,
+             b = 1001 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ---- aaaaab
+v615 <- list(a = 1e6 + 111110 * 0:9,
+             b = 1 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+
+v6 <- c(v601, v602, v603, v604, v605, v606, v607, v608, v609, v610, v611, v612, v613, v614, v615) 
 
 df_v6 <- data.table(so_dep = v6)
-df_v6[, tag := case_when(so_dep %in% v61 ~ "aaaaaa",
-                         so_dep %in% v62 ~ "a(a+1)...(a+5)",
-                         so_dep %in% v63 ~ "aabbcc",
-                         so_dep %in% v64 ~ "aaabbb",
-                         so_dep %in% v65 ~ "ababab",
-                         so_dep %in% v66 ~ "abcabc",
-                         so_dep %in% v67 ~ "aaaabb",
-                         so_dep %in% v68 ~ "aabbbb",
-                         so_dep %in% v69 ~ "abccba"
+df_v6[, tag := case_when(so_dep %in% v601 ~ "aaaaaa",
+                         so_dep %in% v602 ~ "a(a+1)...(a+5)",
+                         so_dep %in% v603 ~ "aabbcc",
+                         so_dep %in% v604 ~ "aaabbb",
+                         so_dep %in% v605 ~ "ababab",
+                         so_dep %in% v606 ~ "abcabc",
+                         so_dep %in% v607 ~ "aaaabb",
+                         so_dep %in% v608 ~ "aabbbb",
+                         so_dep %in% v609 ~ "abccba",
+                         so_dep %in% v610 ~ "aabbaa",
+                         so_dep %in% v611 ~ "abaaba",
+                         so_dep %in% v612 ~ "abbabb",
+                         so_dep %in% v613 ~ "abbbba",
+                         so_dep %in% v614 ~ "aabaab",
+                         so_dep %in% v615 ~ "aaaaab"
                          )
       ][,`:=` (so_dep = sub_sau(so_dep),
               loai = "V6") 
@@ -214,39 +309,81 @@ df_v6[, tag := case_when(so_dep %in% v61 ~ "aaaaaa",
 # CONG THUC SO DEP ------ V5 -------
 #=============================================================================
 # aaaaa
-v51 <- 1e5 + 11111 * 0:9
+v501 <- 1e5 + 11111 * 0:9
 # a(a+1)..(a+4)
-v52 <- 1e5 + 01234 + 11111 * 0:5
+v502 <- 1e5 + 01234 + 11111 * 0:5
 # aaabb
-v53 <- list(x = 1e5 + 11100 * 0:9,
+v503 <- list(x = 1e5 + 11100 * 0:9,
             y = 11 * 0:9) %>% 
   cross() %>%
   map_dbl(lift(sum))
 # aabbb
-v54 <- list(x = 1e5 + 11000 * 0:9,
+v504 <- list(x = 1e5 + 11000 * 0:9,
             y = 111 * 0:9) %>% 
   cross() %>%
   map_dbl(lift(sum))
 # abcab 
-v55 <- data.frame(permutations(10, 3, 0:9)) %>% 
+v505 <- data.frame(permutations(10, 3, 0:9)) %>% 
   mutate(x4 = paste0("1", X1, X2, X3, X1, X2)) %>% 
   pull(x4)
 
 # abcba
-v56 <- data.frame(permutations(10, 3, 0:9)) %>% 
+v506 <- data.frame(permutations(10, 3, 0:9)) %>% 
   mutate(x4 = paste0("1", X1, X2, X3, X2, X1)) %>% 
   pull(x4)
 
-v5 <- c(v51, v52, v53, v54, v55, v56) 
+# abaab
+v507 <- list(x = 1e5 + 10110 * 0:9,
+             y = 1001 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# ababa
+v508 <- list(x = 1e5 + 10101 * 0:9,
+             y = 1010 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# abbab
+v509 <- list(x = 1e5 + 10010 * 0:9,
+             y = 1101 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# abbba
+v510 <- list(x = 1e5 + 10001 * 0:9,
+             y = 1110 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# aabaa
+v511 <- list(x = 1e5 + 11011 * 0:9,
+             y = 100 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+# aaaab
+v512 <- list(x = 1e5 + 11110 * 0:9,
+             y = 1 * 0:9) %>% 
+  cross() %>%
+  map_dbl(lift(sum))
+
+v5 <- c(v501, v502, v503, v504, v505, v506, v507, v508, v509, v510, v511, v512) 
 
 df_v5 <- data.table(so_dep = v5)
 
-df_v5[,tag := case_when(so_dep %in% v51 ~ "aaaaa",
-                         so_dep %in% v52 ~ "a(a+1)...(a+4)",
-                         so_dep %in% v53 ~ "aaabb",
-                         so_dep %in% v54 ~ "aabbb",
-                         so_dep %in% v55 ~ "abcab",
-                         so_dep %in% v56 ~ "abcba"
+df_v5[,tag := case_when(so_dep %in% v501 ~ "aaaaa",
+                        so_dep %in% v502 ~ "a(a+1)...(a+4)",
+                        so_dep %in% v503 ~ "aaabb",
+                        so_dep %in% v504 ~ "aabbb",
+                        so_dep %in% v505 ~ "abcab",
+                        so_dep %in% v506 ~ "abcba",
+                        so_dep %in% v507 ~ "abaab",
+                        so_dep %in% v508 ~ "ababa",
+                        so_dep %in% v509 ~ "abbab",
+                        so_dep %in% v510 ~ "abbba",
+                        so_dep %in% v511 ~ "aabaa",
+                        so_dep %in% v512 ~ "aaaab"
 
   )][,`:=` (so_dep = sub_nam(so_dep),
           loai = "V5")] %>%
@@ -273,7 +410,12 @@ v45 <- list(x = 1e4 + 1001 * 0:9,
   map_dbl(lift(sum))
 v46 <- 13979
 
-v4 <- c(v41, v42, v43, v44, v45, v46) 
+v47 <- list(x = 1e4 + 1110 * 0:9,
+            y = 1 * 0:9) %>%
+  cross() %>%
+  map_dbl(lift(sum))
+
+v4 <- c(v41, v42, v43, v44, v45, v46, v47) 
 
 df_v4 <- data.table(so_dep = v4)
 
@@ -282,7 +424,8 @@ df_v4[, tag := case_when(so_dep %in% v41 ~ "aaaa",
                          so_dep %in% v43 ~ "aabb",
                          so_dep %in% v44 ~ "abab",
                          so_dep %in% v45 ~ "abba",
-                         so_dep %in% v46 ~ "3979"
+                         so_dep %in% v46 ~ "3979",
+                         so_dep %in% v47 ~ "aaab"
                          
   )][,`:=`(so_dep = sub_bon(so_dep),
          loai = "V4")] %>% 
@@ -361,7 +504,7 @@ kq <- kq %>%
 kq$so <- NULL
 
 # Save tam ket qua
-save(kq, file = "kq_new.RData")
+save(kq, file = "kq_20200907.RData")
 
 #=============================================================================
 
@@ -436,9 +579,9 @@ list(tab= tab,
      kq_3a = kq_3a,
      kq_3b = kq_3b,
      kq_3c = kq_3c) %>%
-  writexl::write_xlsx("final_kq.xlsx")
+  writexl::write_xlsx("final_kq_20200907.xlsx")
 
-data.table::fwrite(final_kq, "final_kq.csv")
+data.table::fwrite(final_kq, "final_kq_20200907.csv")
 
 
 
