@@ -6,6 +6,7 @@ rm(list = ls())
 library(tidyverse)
 library(magrittr)
 library(data.table)
+library(gtools)
 options(scipen=10)
 sub_bay <- function(num){num %>% format(digit = 10) %>% str_sub(start = 2L, end = 8L)}
 sub_sau <- function(num){num %>% format(digit = 10) %>% str_sub(start = 2L, end = 7L)}
@@ -174,10 +175,6 @@ df_v7[, tag := case_when(so_dep %in% v71 ~ "aaaaaaa",
                          so_dep %in% v7c ~ "aaaabbb",
                          so_dep %in% v7d ~ "aaabbbb",
                          so_dep %in% v7e ~ "aabbbbb",
-                         so_dep %in% v7f ~ "aaabcbc",
-                         so_dep %in% v7g ~ "ababccc",
-                         so_dep %in% v7ga ~ "aaabbcc",
-                         so_dep %in% v7gb ~ "aabbccc",
                          so_dep %in% v7h ~ "aabbbaa",
                          so_dep %in% v7i ~ "aababaa",
                          so_dep %in% v7k ~ "abababa",
@@ -188,7 +185,12 @@ df_v7[, tag := case_when(so_dep %in% v71 ~ "aaaaaaa",
                          so_dep %in% v7q ~ "aabbaaa",
                          so_dep %in% v7r ~ "ababbbb",
                          so_dep %in% v7t ~ "aaaabab",
-                         so_dep %in% v7x ~ "aaabbaa")
+                         so_dep %in% v7x ~ "aaabbaa",
+                         so_dep %in% v7f ~ "aaabcbc",
+                         so_dep %in% v7g ~ "ababccc",
+                         so_dep %in% v7ga ~ "aaabbcc",
+                         so_dep %in% v7gb ~ "aabbccc"
+                         )
     ][, `:=` (so_dep= sub_bay(so_dep),
       loai = "V7") ] %>% 
   unique()
@@ -276,30 +278,31 @@ v614 <- list(a = 1e6 + 110110 * 0:9,
   map_dbl(lift(sum))
 
 # ---- aaaaab
-v615 <- list(a = 1e6 + 111110 * 0:9,
-             b = 1 * 0:9) %>% 
-  cross() %>%
-  map_dbl(lift(sum))
+# v615 <- list(a = 1e6 + 111110 * 0:9,
+#              b = 1 * 0:9) %>% 
+#   cross() %>%
+#   map_dbl(lift(sum))
 
 
-v6 <- c(v601, v602, v603, v604, v605, v606, v607, v608, v609, v610, v611, v612, v613, v614, v615) 
+v6 <- c(v601, v602, v603, v604, v605, v606, v607, v608, v609, v610, v611, v612, v613, v614 #, v615
+        ) 
 
 df_v6 <- data.table(so_dep = v6)
 df_v6[, tag := case_when(so_dep %in% v601 ~ "aaaaaa",
                          so_dep %in% v602 ~ "a(a+1)...(a+5)",
-                         so_dep %in% v603 ~ "aabbcc",
                          so_dep %in% v604 ~ "aaabbb",
                          so_dep %in% v605 ~ "ababab",
-                         so_dep %in% v606 ~ "abcabc",
                          so_dep %in% v607 ~ "aaaabb",
                          so_dep %in% v608 ~ "aabbbb",
-                         so_dep %in% v609 ~ "abccba",
                          so_dep %in% v610 ~ "aabbaa",
                          so_dep %in% v611 ~ "abaaba",
                          so_dep %in% v612 ~ "abbabb",
                          so_dep %in% v613 ~ "abbbba",
                          so_dep %in% v614 ~ "aabaab",
-                         so_dep %in% v615 ~ "aaaaab"
+                         so_dep %in% v603 ~ "aabbcc",
+                         so_dep %in% v606 ~ "abcabc",
+                         so_dep %in% v609 ~ "abccba",
+                         #so_dep %in% v615 ~ "aaaaab"
                          )
       ][,`:=` (so_dep = sub_sau(so_dep),
               loai = "V6") 
@@ -363,12 +366,13 @@ v511 <- list(x = 1e5 + 11011 * 0:9,
   map_dbl(lift(sum))
 
 # aaaab
-v512 <- list(x = 1e5 + 11110 * 0:9,
-             y = 1 * 0:9) %>% 
-  cross() %>%
-  map_dbl(lift(sum))
+# v512 <- list(x = 1e5 + 11110 * 0:9,
+#              y = 1 * 0:9) %>% 
+#   cross() %>%
+#   map_dbl(lift(sum))
 
-v5 <- c(v501, v502, v503, v504, v505, v506, v507, v508, v509, v510, v511, v512) 
+v5 <- c(v501, v502, v503, v504, v505, v506, v507, v508, v509, v510, v511 #, v512
+        ) 
 
 df_v5 <- data.table(so_dep = v5)
 
@@ -376,14 +380,14 @@ df_v5[,tag := case_when(so_dep %in% v501 ~ "aaaaa",
                         so_dep %in% v502 ~ "a(a+1)...(a+4)",
                         so_dep %in% v503 ~ "aaabb",
                         so_dep %in% v504 ~ "aabbb",
-                        so_dep %in% v505 ~ "abcab",
-                        so_dep %in% v506 ~ "abcba",
                         so_dep %in% v507 ~ "abaab",
                         so_dep %in% v508 ~ "ababa",
                         so_dep %in% v509 ~ "abbab",
                         so_dep %in% v510 ~ "abbba",
                         so_dep %in% v511 ~ "aabaa",
-                        so_dep %in% v512 ~ "aaaab"
+                        so_dep %in% v505 ~ "abcab",
+                        so_dep %in% v506 ~ "abcba",
+                        # so_dep %in% v512 ~ "aaaab"
 
   )][,`:=` (so_dep = sub_nam(so_dep),
           loai = "V5")] %>%
@@ -410,12 +414,14 @@ v45 <- list(x = 1e4 + 1001 * 0:9,
   map_dbl(lift(sum))
 v46 <- 13979
 
-v47 <- list(x = 1e4 + 1110 * 0:9,
-            y = 1 * 0:9) %>%
-  cross() %>%
-  map_dbl(lift(sum))
+# aaab
+# v47 <- list(x = 1e4 + 1110 * 0:9,
+#             y = 1 * 0:9) %>%
+#   cross() %>%
+#   map_dbl(lift(sum))
 
-v4 <- c(v41, v42, v43, v44, v45, v46, v47) 
+v4 <- c(v41, v42, v43, v44, v45, v46 #, v47
+        ) 
 
 df_v4 <- data.table(so_dep = v4)
 
@@ -425,7 +431,7 @@ df_v4[, tag := case_when(so_dep %in% v41 ~ "aaaa",
                          so_dep %in% v44 ~ "abab",
                          so_dep %in% v45 ~ "abba",
                          so_dep %in% v46 ~ "3979",
-                         so_dep %in% v47 ~ "aaab"
+                        # so_dep %in% v47 ~ "aaab"
                          
   )][,`:=`(so_dep = sub_bon(so_dep),
          loai = "V4")] %>% 
@@ -504,7 +510,7 @@ kq <- kq %>%
 kq$so <- NULL
 
 # Save tam ket qua
-save(kq, file = "kq_20200907.RData")
+save(kq, file = "kq_20201006.RData")
 
 #=============================================================================
 
